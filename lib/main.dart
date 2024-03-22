@@ -43,20 +43,19 @@ class _App0208State extends State<App0208> {
 
   @override
   Widget build(BuildContext context) {
-    return (!login) ? pantallaLogin() : pantallaPrincipal(context);
-    //return decisionLogin(context);
+    return inicio(context);
   }
 
-  Scaffold decisionLogin(BuildContext context) {
-    if (login) {
-      return pantallaPrincipal(context);
-    } else {
-      return pantallaLogin();
-    }
+  Widget inicio(BuildContext context) {
+    return (!login) ? loginGUI() : principalGUI(context);
   }
 
-  Scaffold pantallaLogin() {
+  Scaffold loginGUI() {
     return Scaffold(
+      appBar: AppBar(
+        title: Icon(Icons.directions_bus),
+        centerTitle: true,
+      ),
         body: Center(
       child: SizedBox(
         width: 256,
@@ -94,11 +93,14 @@ class _App0208State extends State<App0208> {
                     login = true;
                   });
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text("Inicio de sesión correcto. Bienvenido"),backgroundColor: Colors.green,));
+                    content: Text("Inicio de sesión correcto. Bienvenido"),
+                    backgroundColor: Colors.green,
+                  ));
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content:
-                          Text("Autenticación Incorrecta. Prueba otra vez."),backgroundColor: Colors.deepOrange,));
+                    content: Text("Autenticación Incorrecta. Prueba otra vez."),
+                    backgroundColor: Colors.deepOrange,
+                  ));
                 }
               },
               child: Text(
@@ -110,7 +112,7 @@ class _App0208State extends State<App0208> {
     ));
   }
 
-  Scaffold pantallaPrincipal(BuildContext context) {
+  Scaffold principalGUI(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Camioneros"),
@@ -124,12 +126,13 @@ class _App0208State extends State<App0208> {
           padding: EdgeInsets.zero,
           children: [
             DrawerHeader(
+              decoration: BoxDecoration(color: Colors.green.shade400),
                 child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 CircleAvatar(
                   child: Text("AG"),
-                  radius: 24,
+                  radius: 32,
                 ),
                 Text(
                   "Angel González",
@@ -141,10 +144,56 @@ class _App0208State extends State<App0208> {
             itemDrawer(1, Icons.list, "MOSTRAR"),
             itemDrawer(2, Icons.delete_outline, "ELIMINAR"),
             itemDrawer(3, Icons.edit, "ACTUALIZAR"),
-            itemDrawer(4, Icons.logout, "CERRAR SESION"),
-            SizedBox(height: 240,),
-            itemDrawer(5, Icons.delete_forever, "BORRAR DATOS"),
-            // opcionEliminarTodoDrawer(context)
+            itemDrawerWithFunction(() {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                    title: Text("Cerrar Sesión"),
+                    content: Text("Seguro que deseas cerrar la sesión?"),
+                    actions: [
+                      TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("No")),
+                      TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            setState(() {
+                              login = false;
+                            });
+                          },
+                          child: Text("Sí")),
+                    ]),
+              );
+            }, Icons.logout, "CERRAR SESION"),
+            SizedBox(
+              height: 240,
+            ),
+            itemDrawerWithFunction(() {
+              showDialog(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                        title: Text("Borrar"),
+                        content: Text(
+                            "!Quieres borrar los datos. Esta acción no se puede deshacer"),
+                        actions: [
+                          TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text("Cancelar")),
+                          TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  lista.borrarAlmacen();
+                                  lista.cargarDatos();
+                                });
+                                Navigator.pop(context);
+                              },
+                              child: Text("Aceptar")),
+                        ],
+                      ));
+            }, Icons.delete_forever, "BORRAR DATOS"),
+            opcionEliminarTodoDrawer(context)
           ],
         ),
       ),
@@ -163,37 +212,14 @@ class _App0208State extends State<App0208> {
           )
         ],
       ),
-      onTap: () {
-        Navigator.pop(context);
-        showDialog(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-                  title: Text("Borrar"),
-                  content: Text(
-                      "!Quieres borrar los datos. Esta acción no se puede deshacer"),
-                  actions: [
-                    TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: Text("Cancelar")),
-                    TextButton(
-                        onPressed: () {
-                          setState(() {
-                            lista.borrarAlmacen();
-                            lista.cargarDatos();
-                          });
-                          Navigator.pop(context);
-                        },
-                        child: Text("Aceptar")),
-                  ],
-                ));
-      },
+      onTap: () {},
     );
   }
 
   Widget dinamico() {
     switch (_index) {
       case 0:
-        return formularioCamionero();
+        return capturarGUI();
       case 1:
         return listadoCamioneros();
       case 4:
@@ -201,69 +227,60 @@ class _App0208State extends State<App0208> {
     return ListView();
   }
 
-  ListView formularioCamionero() {
+  ListView capturarGUI() {
     return ListView(
       padding: EdgeInsets.all(32),
       children: [
-        Column(
-          children: [
-            Text(
-              "Nombres",
-              style: TextStyle(fontSize: 24),
-            ),
-            TextField(
-              controller: nombres,
-              decoration: InputDecoration(border: OutlineInputBorder()),
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            Text(
-              "Apellidos",
-              style: TextStyle(fontSize: 24),
-            ),
-            TextField(
-              controller: apellidos,
-              decoration: InputDecoration(border: OutlineInputBorder()),
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            Text(
-              "CURP",
-              style: TextStyle(fontSize: 24),
-            ),
-            TextField(
-              controller: curp,
-              decoration: InputDecoration(border: OutlineInputBorder()),
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            Text(
-              "Licencia",
-              style: TextStyle(fontSize: 24),
-            ),
-            TextField(
-              controller: licencia,
-              decoration: InputDecoration(border: OutlineInputBorder()),
-            ),
-            SizedBox(
-              height: 16,
-            ),
-            FilledButton(
-                onPressed: () {
-                  lista.nuevo(Camionero(
-                      nombres: nombres.text,
-                      apellidos: apellidos.text,
-                      curp: curp.text,
-                      licencia: licencia.text));
-                  lista.guardarDatos();
-                  limpiar();
-                },
-                child: Text("Registrar"))
-          ],
-        )
+        TextField(
+          controller: nombres,
+          decoration: InputDecoration(
+              suffixIcon: Icon(Icons.abc), labelText: "Nombres"),
+        ),
+        SizedBox(
+          height: 16,
+        ),
+        TextField(
+          controller: apellidos,
+          decoration: InputDecoration(
+              suffixIcon: Icon(Icons.abc), labelText: "Apellidos"),
+        ),
+        SizedBox(
+          height: 16,
+        ),
+        TextField(
+          controller: curp,
+          decoration: InputDecoration(
+              suffixIcon: Icon(Icons.perm_identity), labelText: "CURP"),
+        ),
+        SizedBox(
+          height: 16,
+        ),
+        TextField(
+          controller: licencia,
+          decoration: InputDecoration(
+              suffixIcon: Icon(Icons.insert_drive_file),
+              labelText: "Tipo de licencia"),
+        ),
+        SizedBox(
+          height: 16,
+        ),
+        FilledButton(
+            onPressed: () {
+              lista.nuevo(Camionero(
+                  nombres: nombres.text,
+                  apellidos: apellidos.text,
+                  curp: curp.text,
+                  licencia: licencia.text));
+              lista.guardarDatos();
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                duration: Duration(milliseconds: 750),
+                backgroundColor: Colors.lightGreen,
+                  content: Text(
+                "Insertado con éxito",
+              )));
+              limpiar();
+            },
+            child: Text("Registrar"))
       ],
     );
   }
@@ -287,7 +304,8 @@ class _App0208State extends State<App0208> {
     );
   }
 
-  ListTile itemDrawer(int i, IconData icono, String mensaje) {
+  ListTile itemDrawerWithFunction(
+      void Function() funcion, IconData icono, String mensaje) {
     return ListTile(
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -300,8 +318,8 @@ class _App0208State extends State<App0208> {
         ],
       ),
       onTap: () {
-        setState(() => _index = i);
         Navigator.pop(context);
+        funcion();
       },
     );
   }
