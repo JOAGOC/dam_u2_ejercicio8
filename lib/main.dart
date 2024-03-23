@@ -228,7 +228,6 @@ class _App0208State extends State<App0208> {
                   apellidos: apellidos.text,
                   curp: curp.text,
                   licencia: licencia.text));
-              lista.guardarDatos();
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   action: SnackBarAction(
                       label: "Limpiar", onPressed: () => limpiar()),
@@ -364,6 +363,10 @@ class _App0208State extends State<App0208> {
           trailing: IconButton(
             icon: Icon(Icons.mode),
             onPressed: () {
+              nombres.text = camionero.nombres;
+              apellidos.text = camionero.apellidos;
+              curp.text = camionero.curp;
+              licencia.text = camionero.licencia;
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
@@ -371,11 +374,47 @@ class _App0208State extends State<App0208> {
                   return ListView(
                     padding: EdgeInsets.all(16),
                     children: [
-                      ...formCapturarGUI(camionero),
+                      TextField(
+                        controller: nombres,
+                        decoration:
+                        InputDecoration(suffixIcon: Icon(Icons.abc), labelText: "Nombres"),
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      TextField(
+                        controller: apellidos,
+                        decoration: InputDecoration(
+                            suffixIcon: Icon(Icons.abc), labelText: "Apellidos"),
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      TextField(
+                        controller: curp,
+                        decoration: InputDecoration(
+                            suffixIcon: Icon(Icons.perm_identity), labelText: "CURP"),
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
+                      TextField(
+                        controller: licencia,
+                        decoration: InputDecoration(
+                            suffixIcon: Icon(Icons.insert_drive_file),
+                            labelText: "Tipo de licencia"),
+                      ),
+                      SizedBox(
+                        height: 16,
+                      ),
                       TextButton(
                           onPressed: () {
                             setState(() {
-                              lista.actualizar(camionero, pos);
+                              lista.actualizar(Camionero(
+                                  nombres: nombres.text,
+                                  apellidos: apellidos.text,
+                                  curp: curp.text,
+                                  licencia: licencia.text), pos);
                             });
                             Navigator.pop(context);
                             ScaffoldMessenger.of(context).showSnackBar(

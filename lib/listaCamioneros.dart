@@ -40,13 +40,16 @@ class ListaCamioneros {
 
   void nuevo(Camionero camionero){
     data.add(camionero);
+    guardarDatos();
   }
 
   void actualizar(Camionero ca,int pos){
     data[pos] = ca;
+    guardarDatos();
   }
 
   void eliminar(int pos){
     data.removeAt(pos);
+    guardarDatos();
   }
 }
