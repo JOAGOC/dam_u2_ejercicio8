@@ -89,6 +89,8 @@ class _App0208State extends State<App0208> {
                           MaterialStatePropertyAll(Colors.lightBlue.shade900)),
                   onPressed: () {
                     if (usuario.text == "angel" && contrasena.text == "1234") {
+                      usuario.clear();
+                      contrasena.clear();
                       setState(() {
                         login = true;
                       });
@@ -97,6 +99,7 @@ class _App0208State extends State<App0208> {
                         backgroundColor: Colors.green,
                       ));
                     } else {
+                      contrasena.clear();
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content:
                             Text("Autenticación Incorrecta. Prueba otra vez."),
