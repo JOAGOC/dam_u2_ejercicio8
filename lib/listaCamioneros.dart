@@ -7,7 +7,7 @@ class ListaCamioneros {
   Camionero toCamionero(String cod) {
     List res = cod.split("|");
     Camionero c = Camionero(
-        nombres: res[0], apellidos: res[1], curp: res[2], licencia: res[3]);
+        curp: res[0], nombres: res[1], apellidos: res[2], licencia: res[3]);
     return c;
   }
 
